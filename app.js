@@ -98,7 +98,9 @@ const elements = {
   unitButtons: Array.from(document.querySelectorAll(".unit-btn"))
 };
 
-const isAdminPage = Boolean(elements.saleForm || elements.expenseForm || elements.stockForm);
+const currentPage = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
+const isAdminPage = currentPage === "admin.html";
+const isStorefrontPage = !isAdminPage;
 const hasStorefrontGrid = Boolean(elements.productsGrid);
 const hasStorefrontFilters = Boolean(elements.categoryCards.length);
 
@@ -787,6 +789,10 @@ async function handleStockSubmit(event) {
 }
 
 function setupStorefrontInteractions() {
+  if (!isStorefrontPage && !hasStorefrontGrid) {
+    return;
+  }
+
   if (elements.searchForm && elements.searchInput) {
     elements.searchForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -884,7 +890,10 @@ setupAdminInteractions();
 window.addEventListener("focus", () => {
   fetchProducts();
 });
-fetchProducts();
+
+if (isStorefrontPage || isAdminPage) {
+  fetchProducts();
+}
 
 
 
